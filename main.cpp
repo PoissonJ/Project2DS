@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <assert.h>
 #include <iostream>
 #include <vector>
 
@@ -8,12 +10,45 @@ struct Realm {
 
 // returns the Levenshtein distance between two strings (a.k.a. how many
 // incantations/magi are necessary to go from one realm to another)
-static unsigned int leven(std::string a, std::string b) {
-  unsigned int distance = 0;
+unsigned int leven(std::string a, std::string b) {
 
-  // todo
+  /* Time complexity O(aLength x bLength) */
 
-  return distance;
+  const int aLength = a.length();
+  const int bLength = b.length();
+
+  // Create a table to store subproblems
+  unsigned int subTable[aLength+1][bLength+1];
+
+  // Fill table bottom up
+  for (int i = 0; i <= aLength; i++) {
+      for (int j = 0; j <= bLength; j++) {
+
+          // First string empty, insert all of second string
+          if (i == 0)
+              subTable[i][j] = j;  // Minimum operations = j
+
+          // Second string empty, insert all of first string
+          else if (j == 0)
+              subTable[i][j] = i;  // Minimum operations = j
+
+          // If last characters are the same, ignore last character and
+          // continue for remaining string
+          else if (a[i-1] == b[j-1])
+              subTable[i][j] = subTable[i-1][j-1];
+
+          // If last characters are not the same, find minimum from all
+          // possibilities
+          else
+              subTable[i][j] = 1 + std::min(std::min(
+                                            subTable[i-j][j-1], // Replace
+                                            subTable[i][j-1]),  // Insert
+                                            subTable[i-1][j]    // Remove
+                                           );
+      }
+  }
+
+  return subTable[aLength][bLength];
 }
 
 // returns the longest increasing subsequence (a.k.a. the most magi we can use
