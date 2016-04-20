@@ -148,7 +148,7 @@ static void dijkstra(vector<Realm*> world, Realm* source, Realm* destination) {
 
   stack<Realm*> S;
   Realm* u = destination;
-  while (prev[destination->charm] != NULL) {
+  while (prev[u->charm] != NULL) {
     S.push(u);
     u = prev[u->charm];
   }
@@ -158,6 +158,7 @@ static void dijkstra(vector<Realm*> world, Realm* source, Realm* destination) {
   // the destination could be found
   if (S.size() == 1) {
     cout << "IMPOSSIBLE" << endl;
+    return;
   }
 
   unsigned int gems = 0;
@@ -166,8 +167,16 @@ static void dijkstra(vector<Realm*> world, Realm* source, Realm* destination) {
     Realm* r = S.top();
     S.pop();
 
-    cout << r->charm << endl;
+    if (!S.empty()) {
+      unsigned int incants = leven(r->charm, S.top()->charm);
+      incantations += incants;
+      for (unsigned int i = 0; i < incants; i++) {
+        gems += r->magi[i];
+      }
+    }
   }
+
+  cout << incantations << ' ' << gems << endl;
 }
 
 int main() {
