@@ -1,13 +1,22 @@
 #include <algorithm>
-#include <assert.h>
 #include <iostream>
+#include <limits>
+#include <queue>
+#include <map>
+#include <stack>
 #include <vector>
+#include <utility>
 
 using namespace std;
 
 struct Realm {
   string charm;
   vector<unsigned int> magi;
+  vector<Realm*> neighbors;
+  int operator() (const pair<Realm*, unsigned int> &a,
+                  const pair<Realm*, unsigned int> &b) {
+    return a.second > b.second;
+  }
 };
 
 // returns the Levenshtein distance between two strings (a.k.a. how many
@@ -67,11 +76,67 @@ static vector<unsigned int> maxMagi(vector<unsigned int> v) {
 // `source` to the Realm with charm `target` given that all Realms of the world
 // are presented in `graph` and also prints the number of gems required to pay
 // the magi for the incantations
-static void dijkstra(vector<Realm*> graph, string source,
-                string target) {
+static void dijkstra(vector<Realm*> world, Realm* source, Realm* destination) {
+  map<string, unsigned int> dist;
+  map<string, Realm*> prev;
 
-  // todo
+  priority_queue<pair<Realm*, unsigned int>,
+                      vector<pair<Realm*, unsigned int> >, Realm > Q;
 
+  for (unsigned int i = 0; i < world.size(); i++) {
+    Realm* v = world[i];
+    if (v != source) {
+      dist[v->charm] = numeric_limits<unsigned int>::max();
+      prev[v->charm] = NULL;
+    }
+  }
+
+  dist[source->charm] = 0;
+
+  Q.push(make_pair(source, dist[source->charm]));
+
+  while (!Q.empty()) {
+    Realm* u = Q.top().first;
+    Q.pop();
+
+    // exit search early since we've just found the shortest path
+    if (u == destination) {
+      break;
+    }
+
+    for (unsigned int i = 0; i < u->neighbors.size(); i++) {
+      Realm* v = u->neighbors[i];
+      unsigned int alt = dist[u->charm] + leven(u->charm, v->charm);
+      if (alt < dist[v->charm]) {
+        dist[v->charm] = alt;
+        prev[v->charm] = u;
+        Q.push(make_pair(v, alt));
+      }
+    }
+  }
+
+  stack<Realm*> S;
+  Realm* u = destination;
+  while (prev[destination->charm] != NULL) {
+    S.push(u);
+    u = prev[u->charm];
+  }
+  S.push(u);
+
+  // only the source Realm is in the path, therefore no path from the source to
+  // the destination could be found
+  if (S.size() == 1) {
+    cout << "IMPOSSIBLE" << endl;
+  }
+
+  unsigned int gems = 0;
+  unsigned int incantations = 0;
+  while (!S.empty()) {
+    Realm* r = S.top();
+    S.pop();
+
+    cout << r->charm << endl;
+  }
 }
 
 int main() {
@@ -108,7 +173,20 @@ int main() {
   string destination;
   getline(cin, destination);
 
-  dijkstra(world, source, destination);
+  Realm* sourceRealm = NULL;
+  Realm* destinationRealm = NULL;
+
+  for (unsigned int i = 0; i < world.size(); i++) {
+    if (world[i]->charm == source) {
+      sourceRealm = world[i];
+    }
+    else if (world[i]->charm == destination) {
+      destinationRealm = world[i];
+    }
+  }
+
+  dijkstra(world, sourceRealm, destinationRealm);
+  dijkstra(world, destinationRealm, sourceRealm);
 
   return 0;
 }
