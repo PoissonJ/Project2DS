@@ -3,14 +3,16 @@
 #include <iostream>
 #include <vector>
 
+using namespace std;
+
 struct Realm {
-  std::string charm;
-  std::vector<unsigned int> magi;
+  string charm;
+  vector<unsigned int> magi;
 };
 
 // returns the Levenshtein distance between two strings (a.k.a. how many
 // incantations/magi are necessary to go from one realm to another)
-static unsigned int leven(std::string a, std::string b) {
+static unsigned int leven(string a, string b) {
 
   /* Time complexity O(aLength x bLength) */
 
@@ -40,7 +42,7 @@ static unsigned int leven(std::string a, std::string b) {
           // If last characters are not the same, find minimum from all
           // possibilities
           else
-              subTable[i][j] = 1 + std::min(std::min(
+              subTable[i][j] = 1 + min(min(
                                             subTable[i-1][j-1], // Replace
                                             subTable[i][j-1]),  // Insert
                                             subTable[i-1][j]    // Remove
@@ -53,8 +55,8 @@ static unsigned int leven(std::string a, std::string b) {
 
 // returns the longest increasing subsequence (a.k.a. the most magi we can use
 // in a particular realm)
-static std::vector<unsigned int> maxMagi(std::vector<unsigned int> v) {
-  std::vector<unsigned int> ret;
+static vector<unsigned int> maxMagi(vector<unsigned int> v) {
+  vector<unsigned int> ret;
 
   // todo
 
@@ -65,8 +67,8 @@ static std::vector<unsigned int> maxMagi(std::vector<unsigned int> v) {
 // `source` to the Realm with charm `target` given that all Realms of the world
 // are presented in `graph` and also prints the number of gems required to pay
 // the magi for the incantations
-static void dijkstra(std::vector<Realm*> graph, std::string source,
-                std::string target) {
+static void dijkstra(vector<Realm*> graph, string source,
+                string target) {
 
   // todo
 
@@ -76,21 +78,21 @@ int main() {
 
   // number of realms
   unsigned int n;
-  std::cin >> n;
+  cin >> n;
 
-  std::vector<Realm*> world;
+  vector<Realm*> world;
 
   while (n--) {
-    std::string charm;
-    std::getline(std::cin, charm);
+    string charm;
+    getline(cin, charm);
 
     unsigned int magiCount;
-    std::cin >> magiCount;
+    cin >> magiCount;
 
-    std::vector<unsigned int> magi;
+    vector<unsigned int> magi;
     while (magiCount--) {
       unsigned int cost;
-      std::cin >> cost;
+      cin >> cost;
       magi.push_back(cost);
     }
 
@@ -100,11 +102,11 @@ int main() {
     world.push_back(realm);
   }
 
-  std::string source;
-  std::getline(std::cin, source);
+  string source;
+  getline(cin, source);
 
-  std::string destination;
-  std::getline(std::cin, destination);
+  string destination;
+  getline(cin, destination);
 
   dijkstra(world, source, destination);
 
