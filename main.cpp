@@ -174,11 +174,12 @@ int main() {
 
   while (n--) {
     string charm;
-    getline(cin, charm);
+    while (charm.empty()) {
+      getline(cin, charm);
+    }
 
     unsigned int magiCount;
     cin >> magiCount;
-
     vector<unsigned int> magi;
     while (magiCount--) {
       unsigned int cost;
@@ -193,10 +194,14 @@ int main() {
   }
 
   string source;
-  getline(cin, source);
+  while (source.empty()) {
+    getline(cin, source);
+  }
 
   string destination;
-  getline(cin, destination);
+  while (destination.empty()) {
+    getline(cin, destination);
+  }
 
   Realm* sourceRealm = NULL;
   Realm* destinationRealm = NULL;
