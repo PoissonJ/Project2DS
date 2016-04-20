@@ -4,6 +4,7 @@
 #include <queue>
 #include <map>
 #include <stack>
+#include <string>
 #include <vector>
 #include <utility>
 
@@ -64,12 +65,36 @@ static unsigned int leven(string a, string b) {
 
 // returns the longest increasing subsequence (a.k.a. the most magi we can use
 // in a particular realm)
-static vector<unsigned int> maxMagi(vector<unsigned int> v) {
-  vector<unsigned int> ret;
+static vector<unsigned int> maxMagi( vector<unsigned int> a){
 
-  // todo
+  unsigned int n = a.size();
 
-  return ret;
+  vector<unsigned int> returnVector;
+  // create array for dynamic method
+  unsigned int *lis = new unsigned int[n];
+  unsigned int j,k,maxLIS = 0;
+
+  // initialize array with 1s
+  for(unsigned int i=0; i<n; i++)
+    lis[i] = 1;
+
+  // calculate LIS values in dynamic method
+  for(unsigned int i=1; i<n; i++){
+    for(unsigned int j=0; j<i; j++){
+      if(a[i] > a[j] && lis[i] < lis[j]+1)
+        lis[i] = lis[j]+1;
+    }
+  }
+
+  // find maxLIS
+  for(unsigned int i=0; i<n; i++){
+    if(maxLIS < lis[i]){
+      maxLIS = lis[i];
+      returnVector.push_back(a[i]);
+    }
+  }
+
+  return returnVector;
 }
 
 // prints minimum number of incantations needed to go from the Realm with charm
