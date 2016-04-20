@@ -14,15 +14,15 @@ static unsigned int leven(std::string a, std::string b) {
 
   /* Time complexity O(aLength x bLength) */
 
-  const int aLength = a.length();
-  const int bLength = b.length();
+  const unsigned int aLength = a.length();
+  const unsigned int bLength = b.length();
 
   // Create a table to store subproblems
   unsigned int subTable[aLength+1][bLength+1];
 
   // Fill table bottom up
-  for (int i = 0; i <= aLength; i++) {
-      for (int j = 0; j <= bLength; j++) {
+  for (unsigned int i = 0; i <= aLength; i++) {
+      for (unsigned int j = 0; j <= bLength; j++) {
 
           // First string empty, insert all of second string
           if (i == 0)
