@@ -129,7 +129,15 @@ static void dijkstra(vector<Realm*> world, Realm* source, Realm* destination) {
 
     for (unsigned int i = 0; i < u->neighbors.size(); i++) {
       Realm* v = u->neighbors[i];
-      unsigned int alt = dist[u->charm] + leven(u->charm, v->charm);
+
+      unsigned int alt;
+      if (dist[u->charm] == numeric_limits<unsigned int>::max()) {
+        alt = leven(u->charm, v->charm);
+      }
+      else {
+        alt = dist[u->charm] + leven(u->charm, v->charm);
+      }
+
       if (alt < dist[v->charm]) {
         dist[v->charm] = alt;
         prev[v->charm] = u;
