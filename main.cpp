@@ -110,10 +110,8 @@ static void dijkstra(vector<Realm*> world, Realm* source, Realm* destination) {
 
   for (unsigned int i = 0; i < world.size(); i++) {
     Realm* v = world[i];
-    if (v != source) {
-      dist[v->charm] = numeric_limits<unsigned int>::max();
-      prev[v->charm] = NULL;
-    }
+    dist[v->charm] = numeric_limits<unsigned int>::max();
+    prev[v->charm] = NULL;
   }
 
   dist[source->charm] = 0;
