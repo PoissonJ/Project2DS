@@ -213,6 +213,13 @@ int main() {
     else if (world[i]->charm == destination) {
       destinationRealm = world[i];
     }
+
+    for (unsigned int j = 0; j < world.size(); j++) {
+      unsigned cost = leven(world[i]->charm, world[j]->charm);
+      if (cost <= world[i]->magi.size()) {
+        world[i]->neighbors.push_back(world[j]);
+      }
+    }
   }
 
   dijkstra(world, sourceRealm, destinationRealm);
