@@ -41,7 +41,7 @@ static unsigned int leven(std::string a, std::string b) {
           // possibilities
           else
               subTable[i][j] = 1 + std::min(std::min(
-                                            subTable[i-j][j-1], // Replace
+                                            subTable[i-1][j-1], // Replace
                                             subTable[i][j-1]),  // Insert
                                             subTable[i-1][j]    // Remove
                                            );
