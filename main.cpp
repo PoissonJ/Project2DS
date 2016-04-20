@@ -66,13 +66,13 @@ static unsigned int leven(string a, string b) {
 // returns the longest increasing subsequence (a.k.a. the most magi we can use
 // in a particular realm)
 static vector<unsigned int> maxMagi( vector<unsigned int> a){
-
   unsigned int n = a.size();
 
   vector<unsigned int> returnVector;
+
   // create array for dynamic method
   unsigned int *lis = new unsigned int[n];
-  unsigned int j,k,maxLIS = 0;
+  unsigned int maxLIS = 0;
 
   // initialize array with 1s
   for(unsigned int i=0; i<n; i++)
