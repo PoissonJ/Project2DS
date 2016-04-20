@@ -30,7 +30,7 @@ static unsigned int leven(std::string a, std::string b) {
 
           // Second string empty, insert all of first string
           else if (j == 0)
-              subTable[i][j] = i;  // Minimum operations = j
+              subTable[i][j] = i;  // Minimum operations = i
 
           // If last characters are the same, ignore last character and
           // continue for remaining string
