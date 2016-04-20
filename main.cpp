@@ -10,7 +10,7 @@ struct Realm {
 
 // returns the Levenshtein distance between two strings (a.k.a. how many
 // incantations/magi are necessary to go from one realm to another)
-unsigned int leven(std::string a, std::string b) {
+static unsigned int leven(std::string a, std::string b) {
 
   /* Time complexity O(aLength x bLength) */
 
