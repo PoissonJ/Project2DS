@@ -69,38 +69,31 @@ static unsigned int leven(string a, string b) {
 
 // returns the longest increasing subsequence (a.k.a. the most magi we can use
 // in a particular realm)
-static vector<unsigned int> maxMagi( vector<unsigned int> a){
-  unsigned int n = a.size();
+static vector<unsigned int> maxMagi(vector<unsigned int> a) {
+  vector<vector<unsigned int> > L(a.size());
 
-  vector<unsigned int> returnVector;
+  L[0].push_back(a[0]);
 
-  // create array for dynamic method
-  unsigned int *lis = new unsigned int[n];
-  unsigned int maxLIS = 0;
-
-  // initialize array with 1s
-  for(unsigned int i = 0; i < n; i++) {
-    lis[i] = 1;
-  }
-
-  // calculate LIS values in dynamic method
-  for (unsigned int i = 1; i < n; i++) {
+  for (unsigned int i = 1; i < a.size(); i++) {
     for (unsigned int j = 0; j < i; j++) {
-      if (a[i] > a[j] && lis[i] < lis[j] + 1) {
-        lis[i] = lis[j] + 1;
+      if (a[j] < a[i] && L[i].size() < L[j].size() + 1) {
+        L[i] = L[j];
       }
     }
+
+    L[i].push_back(a[i]);
   }
 
-  // find maxLIS
-  for (unsigned int i = 0; i < n; i++) {
-    if (maxLIS < lis[i]) {
-      maxLIS = lis[i];
-      returnVector.push_back(a[i]);
+  unsigned int maxSeq = 0;
+  unsigned int maxI = 0;
+  for (unsigned int i = 1; i < L.size(); i++) {
+    if (L[i].size() > maxSeq) {
+      maxSeq = L[i].size();
+      maxI = i;
     }
   }
 
-  return returnVector;
+  return L[maxI];
 }
 
 // prints minimum number of incantations needed to go from the Realm with charm
