@@ -13,4 +13,11 @@ build: mitra
 clean:
 	rm -f vgcore* mitra
 
-.PHONY: build clean
+test:
+	for number in 3 4 5 6 7 8 ; do \
+	  echo $$number && \
+	  time ./mitra < test/in$$number > out && \
+	  colordiff out test/out$$number; \
+	done
+
+.PHONY: build clean test
