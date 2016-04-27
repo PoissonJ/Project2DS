@@ -14,10 +14,10 @@ clean:
 	rm -f vgcore* mitra
 
 test:
-	for number in 3 4 5 6 7 8 ; do \
-	  echo $$number && \
-	  time ./mitra < test/in$$number > out && \
-	  colordiff out test/out$$number; \
+	for number in 1 2 3 4 5 6 7 8 ; do \
+	  echo './mitra < test/in'$$number && \
+	  ./mitra < test/in$$number && \
+	  echo -e ''; \
 	done
 
 .PHONY: build clean test
