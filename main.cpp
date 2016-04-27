@@ -14,40 +14,40 @@ struct Realm {
   string charm;
   vector<unsigned int> magi;
   vector<Realm*> neighbors;
+
+  // This is used by the min heap to find the closest Realm
   int operator() (const pair<Realm*, unsigned int> &a,
                   const pair<Realm*, unsigned int> &b) {
     return a.second > b.second;
   }
 };
 
-// returns the Levenshtein distance between two strings (a.k.a. how many
+// Returns the Levenshtein distance between two strings (a.k.a. how many
 // incantations/magi are necessary to go from one realm to another)
 static unsigned int leven(string a, string b) {
-
-  /* Time complexity O(aLength x bLength) */
-
   const unsigned int aLength = a.length();
   const unsigned int bLength = b.length();
 
-  // Create a table to store subproblems
   unsigned int subTable[aLength+1][bLength+1];
 
   // Fill table bottom up
   for (unsigned int i = 0; i <= aLength; i++) {
     for (unsigned int j = 0; j <= bLength; j++) {
 
-      // First string empty, insert all of second string
+      // First string empty, so we must insert all of second string. Minimum
+      // number of operations is therefore j.
       if (i == 0) {
-        subTable[i][j] = j;  // Minimum operations = j
+        subTable[i][j] = j;
       }
 
-      // Second string empty, insert all of first string
+      // Second string empty, so we must insert all of first string. Minimum
+      // number of operations is therefore i.
       else if (j == 0) {
-        subTable[i][j] = i;  // Minimum operations = i
+        subTable[i][j] = i;
       }
 
-      // If last characters are the same, ignore last character and
-      // continue for remaining string
+      // If the last character of each string are the same, ignore that last
+      // character and continue for remaining string
       else if (a[i-1] == b[j-1]) {
         subTable[i][j] = subTable[i-1][j-1];
       }
@@ -67,9 +67,11 @@ static unsigned int leven(string a, string b) {
   return subTable[aLength][bLength];
 }
 
-// returns the longest increasing subsequence (a.k.a. the most magi we can use
+// Returns the longest increasing subsequence (a.k.a. the most magi we can use
 // in a particular realm)
 static vector<unsigned int> maxMagi(vector<unsigned int> a) {
+
+  // Each row in this matrix will be an increasing subsequence of a
   vector<vector<unsigned int> > L(a.size());
 
   L[0].push_back(a[0]);
@@ -84,6 +86,7 @@ static vector<unsigned int> maxMagi(vector<unsigned int> a) {
     L[i].push_back(a[i]);
   }
 
+  // Find the longest row (= longest increasing subsequence)
   unsigned int maxSeq = 0;
   unsigned int maxI = 0;
   for (unsigned int i = 1; i < L.size(); i++) {
@@ -96,14 +99,15 @@ static vector<unsigned int> maxMagi(vector<unsigned int> a) {
   return L[maxI];
 }
 
-// prints minimum number of incantations needed to go from the Realm with charm
+// Prints minimum number of incantations needed to go from the Realm with charm
 // `source` to the Realm with charm `target` given that all Realms of the world
-// are presented in `graph` and also prints the number of gems required to pay
+// are presented in `world` and also prints the number of gems required to pay
 // the magi for the incantations
 static void dijkstra(vector<Realm*> world, Realm* source, Realm* destination) {
   map<string, unsigned int> dist;
   map<string, Realm*> prev;
 
+  // Min heap of (Realm, dist) pairs
   priority_queue<pair<Realm*, unsigned int>,
                       vector<pair<Realm*, unsigned int> >, Realm > Q;
 
@@ -121,7 +125,7 @@ static void dijkstra(vector<Realm*> world, Realm* source, Realm* destination) {
     Realm* u = Q.top().first;
     Q.pop();
 
-    // exit search early since we've just found the shortest path
+    // Exit search early since we've just found the shortest path
     if (u == destination) {
       break;
     }
@@ -145,6 +149,7 @@ static void dijkstra(vector<Realm*> world, Realm* source, Realm* destination) {
     }
   }
 
+  // Traceback through `prev` from the destination to the source
   stack<Realm*> S;
   Realm* u = destination;
   while (prev[u->charm] != NULL) {
@@ -153,19 +158,22 @@ static void dijkstra(vector<Realm*> world, Realm* source, Realm* destination) {
   }
   S.push(u);
 
-  // only the source Realm is in the path, therefore no path from the source to
-  // the destination could be found
+  // Only the destination Realm is in the path, therefore no path from the
+  // source to the destination could be found
   if (S.size() == 1) {
     cout << "IMPOSSIBLE" << endl;
     return;
   }
 
+  // Go through the stack, which is essentially going from source to destination
   unsigned int gems = 0;
   unsigned int incantations = 0;
   while (!S.empty()) {
     Realm* r = S.top();
     S.pop();
 
+    // If the stack is now empty, then we are at the destination realm and there
+    // is no need to add any more incantations or gems
     if (!S.empty()) {
       unsigned int incants = leven(r->charm, S.top()->charm);
       incantations += incants;
@@ -221,6 +229,8 @@ int main() {
   Realm* destinationRealm = NULL;
 
   for (unsigned int i = 0; i < world.size(); i++) {
+    // Get pointers to the source and destination realms (for passing to the
+    // search later)
     if (world[i]->charm == source) {
       sourceRealm = world[i];
     }
@@ -228,7 +238,16 @@ int main() {
       destinationRealm = world[i];
     }
 
+    // Get the neighbors of this ith realm by going through every other realm
+    // and comparing the edit distance to the number of available magi. If the
+    // edit distance is less than or equal to the number of magi, then we can
+    // say that the jth realm is a neighbor of the ith (one-way).
     for (unsigned int j = 0; j < world.size(); j++) {
+      // Realms are not neighbors of themselves
+      if (i == j) {
+        continue;
+      }
+
       unsigned cost = leven(world[i]->charm, world[j]->charm);
       if (cost <= world[i]->magi.size()) {
         world[i]->neighbors.push_back(world[j]);
