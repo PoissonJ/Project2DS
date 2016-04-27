@@ -6,7 +6,7 @@ CFLAGS=-pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy \
   -Wundef -Wno-unused -g
 
 mitra: main.cpp
-	g++ $(CFLAGS) $< -o $@
+	g++ $< -o $@
 
 build: mitra
 
@@ -17,7 +17,7 @@ test:
 	for number in 1 2 3 4 5 6 7 8 ; do \
 	  echo './mitra < test/in'$$number && \
 	  ./mitra < test/in$$number && \
-	  echo -e ''; \
+	  echo; \
 	done
 
 .PHONY: build clean test
